@@ -102,10 +102,7 @@ public class InventoryProvider extends ContentProvider {
         if (quantity == null || quantity < 0) {
             throw new IllegalArgumentException("Item requires a quantity");
         }
-        Integer sale = values.getAsInteger(InventoryEntry.COLUMN_ITEM_SALE);
-        if (sale == null || !InventoryEntry.isValidSale(sale)) {
-            throw new IllegalArgumentException("Item requires valid sale");
-        }
+
         long id = db.insert(InventoryEntry.TABLE_NAME, null, values);
 
         getContext().getContentResolver().notifyChange(uri, null);
@@ -174,13 +171,6 @@ public class InventoryProvider extends ContentProvider {
         if (values.containsKey(InventoryEntry.COLUMN_ITEM_QUANTITY)) {
             Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_ITEM_QUANTITY);
             if (quantity == null || quantity < 0) {
-                throw new IllegalArgumentException("Item requires valid quantity");
-            }
-        }
-
-        if (values.containsKey(InventoryEntry.COLUMN_ITEM_SALE)) {
-            Integer sale = values.getAsInteger(InventoryEntry.COLUMN_ITEM_SALE);
-            if (sale == null || !InventoryEntry.isValidSale(sale)) {
                 throw new IllegalArgumentException("Item requires valid quantity");
             }
         }

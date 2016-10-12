@@ -1,7 +1,6 @@
 package com.android.ipshita.inventory;
 
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -64,21 +63,6 @@ public class CatalogActivity extends AppCompatActivity implements android.app.Lo
         return true;
     }
 
-    private void insertItem() {
-        // Create a ContentValues object where column names are the keys,
-        // and Toto's pet attributes are the values.
-        ContentValues values = new ContentValues();
-        values.put(InventoryEntry.COLUMN_ITEM_NAME, "Wheat");
-        values.put(InventoryEntry.COLUMN_ITEM_PRICE, 50);
-        values.put(InventoryEntry.COLUMN_ITEM_SALE, InventoryEntry.SALE_AVLBL);
-        values.put(InventoryEntry.COLUMN_ITEM_QUANTITY, 7);
-
-        // Insert a new row for Toto into the provider using the ContentResolver.
-        // Use the {@link PetEntry#CONTENT_URI} to indicate that we want to insert
-        // into the pets database table.
-        // Receive the new content URI that will allow us to access Toto's data in the future.
-        Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, values);
-    }
 
     private void deleteAllItems() {
         int rowsDeleted = getContentResolver().delete(InventoryEntry.CONTENT_URI, null, null);
@@ -88,10 +72,6 @@ public class CatalogActivity extends AppCompatActivity implements android.app.Lo
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to a click on the "Insert dummy data" menu option
-            case R.id.action_insert_dummy_data:
-                insertItem();
-                return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
                 deleteAllItems();
@@ -106,7 +86,8 @@ public class CatalogActivity extends AppCompatActivity implements android.app.Lo
         String[] projection = {InventoryEntry.COLUMN_ITEM_ID,
                 InventoryEntry.COLUMN_ITEM_NAME,
                 InventoryEntry.COLUMN_ITEM_PRICE,
-                InventoryEntry.COLUMN_ITEM_QUANTITY};
+                InventoryEntry.COLUMN_ITEM_QUANTITY,
+                InventoryEntry.COLUMN_ITEM_SOLD};
         cursor = getContentResolver().query(InventoryEntry.CONTENT_URI, projection, null, null, null);
 
 

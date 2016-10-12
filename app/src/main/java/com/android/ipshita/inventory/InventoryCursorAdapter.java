@@ -1,13 +1,18 @@
 package com.android.ipshita.inventory;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
-import com.android.ipshita.inventory.data.InventoryContract.InventoryEntry;
+import android.widget.Toast;
+
+import com.android.ipshita.inventory.data.InventoryContract;
 
 public class InventoryCursorAdapter extends CursorAdapter{
 
@@ -22,21 +27,64 @@ public class InventoryCursorAdapter extends CursorAdapter{
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView ProductName = (TextView) view.findViewById(R.id.edit_name);
-        TextView ProductPrice=(TextView)view.findViewById(R.id.edit_price);
-        TextView ProductQty=(TextView)view.findViewById(R.id.edit_qty);
+        TextView textName = (TextView) view.findViewById(R.id.name);
+        TextView textPrice = (TextView) view.findViewById(R.id.price);
+        TextView textQuantity = (TextView) view.findViewById(R.id.quantity);
+        int nameColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_ITEM_NAME);
+        int priceColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_ITEM_PRICE);
+        int quantityColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY);
+        int soldColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_ITEM_SOLD);
 
-        int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_NAME);
-        int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_PRICE);
-        int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_ITEM_QUANTITY);
+        String currentName = cursor.getString(nameColumnIndex);
+        final int currentPrice = cursor.getInt(priceColumnIndex);
+        int currentQuantity = cursor.getInt(quantityColumnIndex);
+        int currentSold = cursor.getInt(soldColumnIndex);
 
-        String name=cursor.getString(nameColumnIndex);
-        int price=cursor.getInt(priceColumnIndex);
-        int qty=cursor.getInt(quantityColumnIndex);
+        textName.setText(currentName);
 
-        ProductName.setText(name);
-        ProductPrice.setText(price+"");
-        ProductQty.setText(qty+"");
+        String newPriceString = Integer.toString(currentPrice);
+        textPrice.setText(newPriceString);
+
+        String quantityStringFormatted = Integer.toString(currentQuantity);
+        textQuantity.setText(quantityStringFormatted);
+
+        final int nCurrentQuantity = currentQuantity;
+        final int nsoldQuantity = currentSold;
+        final Context nContext = context;
+
+        int idColumnIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_ITEM_ID);
+
+        final int rowId = cursor.getInt(idColumnIndex);
+        Button buttonSale = (Button) view.findViewById(R.id.sale_button);
+        buttonSale.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                updateUI(nCurrentQuantity, nsoldQuantity, nContext, rowId);
+            }
+        });
 
     }
-}
+
+    private void updateUI(int currentQuantity, int soldQuantity, Context context, int id) {
+        if (currentQuantity != 0) {
+            currentQuantity--;
+            soldQuantity++;
+            ContentValues values = new ContentValues();
+            values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY, currentQuantity);
+            values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SOLD, soldQuantity);
+            Uri newUri = Uri.withAppendedPath(InventoryContract.InventoryEntry.CONTENT_URI, Integer.toString(id));
+
+            int rows = context.getContentResolver().update(newUri, values, null, null);
+            if (rows == 0) {
+                Toast.makeText(context, "Update failed", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Updated successfully", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(context, "No items left", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    }

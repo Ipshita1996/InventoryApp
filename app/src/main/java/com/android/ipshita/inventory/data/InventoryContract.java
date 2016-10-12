@@ -28,17 +28,7 @@ public final class InventoryContract {
         public static final String COLUMN_ITEM_NAME = "name";
         public static final String COLUMN_ITEM_PRICE = "price";
         public static final String COLUMN_ITEM_QUANTITY = "quantity";
-        public final static String COLUMN_ITEM_SALE = "sale";
-
-        public static final int SALE_UNKNOWN = 0;
-        public static final int SALE_SOLD = 1;
-        public static final int SALE_AVLBL = 2;
-
-        public static boolean isValidSale(int sale) {
-            if (sale == SALE_UNKNOWN || sale == SALE_SOLD || sale == SALE_AVLBL) {
-                return true;
-            }
-            return false;
-        }
+        public static final String COLUMN_ITEM_SOLD = "sold";
+        public static final String COLUMN_ITEM_PIC = "pic";
     }
 }

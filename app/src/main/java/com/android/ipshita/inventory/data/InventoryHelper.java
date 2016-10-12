@@ -33,8 +33,10 @@ public class InventoryHelper extends SQLiteOpenHelper {
                 " INTEGER NOT NULL, " +
                 InventoryEntry.COLUMN_ITEM_QUANTITY +
                 " INTEGER NOT NULL DEFAULT 0, " +
-                InventoryEntry.COLUMN_ITEM_SALE +
-                " INTEGER NOT NULL);";
+                InventoryEntry.COLUMN_ITEM_SOLD +
+                " INTEGER NOT NULL DEFAULT 0, " +
+                InventoryEntry.COLUMN_ITEM_PIC +
+                " TEXT);";
         sqLiteDatabase.execSQL(CREATE_TABLE_ITEMS);
     }
 
